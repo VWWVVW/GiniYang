@@ -24,7 +24,8 @@ public final class GiniVisual extends GiniYang{
         setRun=new JSet[2],
         setData=new JSet[8];
     private JCheckBox ckbSBS=new JCheckBox("Step by step",true),
-        ckbSrt=new JCheckBox("Sort Result",true);
+        ckbSrt=new JCheckBox("Sort Result",true),
+        ckbHlt=new JCheckBox("Highlight",false);
     private JButton btnCtrl=new JButton("Start"),
         btnHelp=new JButton("Help the poor"),
         btnRset=new JButton("Set coefficient");
@@ -55,11 +56,15 @@ public final class GiniVisual extends GiniYang{
             space=(pnl.getWidth()-width*size())/2;
         ArrayList<Double> ary=isSorted
             ?getSorted(true):getACopy();
-        for(int i=0;i<size();i++)
+        int index=getIndex(0.2);
+        for(int i=0;i<size();i++){
             lbl[i].setBounds(width*i+space,
                 (int)(pnl.getHeight()*(1-ary.get(i)/max)),
                 width,
                 (int)(pnl.getHeight()*ary.get(i)/max));
+            lbl[i].setBackground((ckbHlt.isSelected()&&i<=index)?
+                colorFront.darker():colorFront);
+        }
     }
 
     private void refreshPanel(){
@@ -67,6 +72,10 @@ public final class GiniVisual extends GiniYang{
     }
 //Methods-Inits
     private void initPnlGram(){
+        initPnlGram(ckbHlt.isSelected());
+    }
+
+    private void initPnlGram(boolean isHighlighted){
         try{
             for(int i=0;i<lbl.length;i++){
                 lbl[i].setVisible(false);
@@ -84,8 +93,8 @@ public final class GiniVisual extends GiniYang{
             lbl[i]=new JLabel();
             lbl[i].setOpaque(true);
             lbl[i].setBackground(colorFront);
-            lbl[i].setVisible(true);
             pnl.add(lbl[i]);
+            lbl[i].setVisible(true);
         }
         pnl.setBackground(colorBack);
     }
@@ -189,7 +198,15 @@ public final class GiniVisual extends GiniYang{
         ckbSrt.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
+                ckbHlt.setSelected(ckbSrt.isSelected());
                 refreshPanel();
+            }
+        });
+        ckbHlt.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if(!ckbSrt.isSelected())
+                    ckbHlt.setSelected(false);
             }
         });
     }
@@ -224,12 +241,10 @@ public final class GiniVisual extends GiniYang{
         pnlFrm[1].add(ckbSrt,new GBC(0,0,1,1,0,0));
         for(int i=0;i<setRun.length;i++)
             pnlFrm[1].add(setRun[i],new GBC(0,i+1,1,1,0,0));
-        pnlFrm[1].add(ckbSBS,new GBC(0,
-            setRun.length+1,1,1,0,0));
-        pnlFrm[1].add(btnCtrl,new GBC(0,
-            setRun.length+2,1,1,0,0));
-        pnlFrm[1].add(btnHelp,new GBC(0,
-            setRun.length+3,1,1,0,0));
+        pnlFrm[1].add(ckbSBS,new GBC(0,setRun.length+1,1,1,0,0));
+        pnlFrm[1].add(ckbHlt,new GBC(0,setRun.length+2,1,1,0,0));
+        pnlFrm[1].add(btnCtrl,new GBC(0,setRun.length+3,1,1,0,0));
+        pnlFrm[1].add(btnHelp,new GBC(0,setRun.length+4,1,1,0,0));
         for(int i=0;i<setData.length;i++)
             pnlFrm[2].add(setData[i],new GBC(0,i,1,1,1,0));
     }

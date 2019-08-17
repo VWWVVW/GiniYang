@@ -62,6 +62,23 @@ public class Gini extends ArrayList<Double>{
         return a;
     }
 
+    public int getIndex(double percent){
+        Double s0=0d,s=0d;
+        ArrayList<Double> ary=getSorted(true);
+        for(Double d:getACopy())
+            s+=d;
+        if(s==0)
+            return 0;
+        for(int i=0;i<size();i++){
+            s0+=ary.get(i);
+            if(s0/s>=percent){
+                System.out.println(s0+"");
+                return i;
+            }
+        }
+        return size()-1;
+    }
+
     public double getMax(){
         double max=0;
         for(int i=0;i<size();i++)
